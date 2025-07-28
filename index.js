@@ -8,7 +8,7 @@ const app = express();
 
 // ✅ Allow frontend origin explicitly
 app.use(cors({
-  origin: 'http://localhost:3000' || 'https://digiworq.com', // or replace with your production domain when deployed
+  origin: ['http://localhost:3000', 'https://digiworq.com'],
   credentials: true,
 }));
 
