@@ -1,22 +1,25 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import analyzeBrand from './analyze-brand.js';
+import chatbot from './chatbot.js'; // 👈 import new route
+import tracking from './tracking.js';   
 
+dotenv.config();
 const app = express();
 
-// ✅ Enable CORS for your frontend
+// ✅ Allow frontend origin explicitly
 app.use(cors({
-  origin: 'https://www.digiworq.com',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: ['http://localhost:3000', 'https://digiworq.com'],
+  credentials: true,
 }));
 
-// ✅ Explicitly handle OPTIONS preflight requests (important!)
-app.options('*', cors());
+app.use(express.json());
 
-// Your routes
-app.post('/api/analyze-brand', (req, res) => {
-  res.json({ message: 'Brand analyzed' });
-});
+// Existing routes
+app.use('/api', analyzeBrand);
+app.use('/api', tracking);
+app.use('/api', chatbot); 
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
