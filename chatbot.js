@@ -94,10 +94,11 @@ async function sendEmail(conversationText) {
 
   await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: 'sahanas.digiworq@gmail.com',
+    to: 'digiworqsolutions@gmail.com',
     subject: 'New Chatbot Conversation - Digiworq',
     text: conversationText,
   });
 }
 
 export default router;
+
