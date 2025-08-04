@@ -22,7 +22,7 @@ router.post('/track', async (req, res) => {
   // Optional: Send to email
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'sahanas.digiworq@gmail.com',
+    to: 'digiworqsolutions@gmail.com',
     subject: 'User Visited URL',
     text: `User visited: ${url}\nTime: ${timestamp}`,
   };
@@ -37,3 +37,4 @@ router.post('/track', async (req, res) => {
 });
 
 export default router;
+
