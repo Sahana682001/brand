@@ -5,26 +5,36 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-// Example: Email setup
+// Email setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,     // your_email@gmail.com
-    pass: process.env.EMAIL_PASS,     // app password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
 router.post('/track', async (req, res) => {
-  const { url, timestamp } = req.body;
+  const { url } = req.body;
 
-  console.log(`User visited: ${url} at ${timestamp}`);
+  // Format timestamp in IST and 12-hour format
+  const indiaTime = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 
-  // Optional: Send to email
+  console.log(`User visited: ${url} at ${indiaTime}`);
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: 'digiworqsolutions@gmail.com',
     subject: 'User Visited URL',
-    text: `User visited: ${url}\nTime: ${timestamp}`,
+    text: `User visited: ${url}\nTime: ${indiaTime}`,
   };
 
   try {
@@ -37,4 +47,3 @@ router.post('/track', async (req, res) => {
 });
 
 export default router;
-
