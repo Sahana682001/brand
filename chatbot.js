@@ -7,7 +7,7 @@ dotenv.config();
 const router = express.Router();
 
 router.post('/chat', async (req, res) => {
-  const messages = req.body.messages || [];
+  const { messages = [], userInfo = {} } = req.body;
 
   const systemPrompt = {
     role: 'system',
@@ -49,7 +49,6 @@ router.post('/chat', async (req, res) => {
   Keep responses helpful, brief, and on-topic.
   `
   };
-  
 
   const payload = {
     model: "mistralai/mistral-7b-instruct",
@@ -70,10 +69,20 @@ router.post('/chat', async (req, res) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "Sorry, something went wrong.";
 
-    // ✅ Send conversation to email
-    const conversationText = messages.map(msg => `${msg.role.toUpperCase()}: ${msg.content}`).join('\n\n') +
-      `\n\nASSISTANT: ${reply}`;
+    // ✅ Prepare full conversation with user info
+    const conversationText = `
+User Info:
+Name: ${userInfo.name || 'N/A'}
+Email: ${userInfo.email || 'N/A'}
+Phone: ${userInfo.phone || 'N/A'}
 
+Conversation:
+${messages.map(msg => `${msg.role.toUpperCase()}: ${msg.content}`).join('\n\n')}
+
+ASSISTANT: ${reply}
+    `.trim();
+
+    // ✅ Send email
     await sendEmail(conversationText);
 
     res.json({ reply });
@@ -87,8 +96,8 @@ async function sendEmail(conversationText) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,     // e.g., your Gmail
-      pass: process.env.EMAIL_PASS,     // App password or regular password (not recommended)
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
@@ -101,4 +110,3 @@ async function sendEmail(conversationText) {
 }
 
 export default router;
-
